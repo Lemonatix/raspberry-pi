@@ -24,7 +24,7 @@ def upload_file(server_url, file_path):
     try:
         with open(file_path, 'rb') as f:
             files = {'file': f}
-            response = requests.post(f"{server_url}/upload", files=files)
+            response = requests.post(f"{server_url}/upload", files=files, timeout=30)
         
         if response.status_code == 200:
             data = response.json()
@@ -55,7 +55,7 @@ def list_files(server_url):
     print(f"Fetching file list from {server_url}...")
     
     try:
-        response = requests.get(f"{server_url}/files")
+        response = requests.get(f"{server_url}/files", timeout=10)
         
         if response.status_code == 200:
             data = response.json()
@@ -90,7 +90,7 @@ def check_health(server_url):
         server_url: URL of the file server
     """
     try:
-        response = requests.get(f"{server_url}/health")
+        response = requests.get(f"{server_url}/health", timeout=10)
         
         if response.status_code == 200:
             data = response.json()

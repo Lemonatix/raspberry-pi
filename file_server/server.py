@@ -18,6 +18,7 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
+app.config['SECRET_KEY'] = os.urandom(24)  # Generate random secret key for session security
 
 # Create upload directory if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -128,28 +129,27 @@ def upload_file():
     if not allowed_file(file.filename):
         return jsonify({'error': 'File type not allowed'}), 400
     
-    if file:
-        # Secure the filename and add timestamp to avoid conflicts
-        filename = secure_filename(file.filename)
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        name, ext = os.path.splitext(filename)
-        unique_filename = f"{name}_{timestamp}{ext}"
+    # Secure the filename and add timestamp to avoid conflicts
+    filename = secure_filename(file.filename)
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    name, ext = os.path.splitext(filename)
+    unique_filename = f"{name}_{timestamp}{ext}"
+    
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+    
+    try:
+        file.save(filepath)
+        file_size = os.path.getsize(filepath)
         
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-        
-        try:
-            file.save(filepath)
-            file_size = os.path.getsize(filepath)
-            
-            return jsonify({
-                'success': True,
-                'message': 'File uploaded successfully',
-                'filename': unique_filename,
-                'size': file_size,
-                'timestamp': timestamp
-            }), 200
-        except Exception as e:
-            return jsonify({'error': f'Failed to save file: {str(e)}'}), 500
+        return jsonify({
+            'success': True,
+            'message': 'File uploaded successfully',
+            'filename': unique_filename,
+            'size': file_size,
+            'timestamp': timestamp
+        }), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to save file: {str(e)}'}), 500
 
 @app.route('/files', methods=['GET'])
 def list_files():
