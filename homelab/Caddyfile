@@ -1,0 +1,12 @@
+{
+  email {$LETSENCRYPT_EMAIL}
+}
+
+{$WEBSITE_DOMAIN} {
+  root * /srv/site
+  file_server
+}
+
+{$FILE_SERVER_DOMAIN} {
+  reverse_proxy file_server:5000
+}

@@ -1,5 +1,5 @@
 # raspberry-pi
-This repo will host some projects, that can be done with a raspberry pi.
+This repo hosts practical projects for a Raspberry Pi home setup.
 
 ## Projects
 
@@ -23,3 +23,21 @@ python3 server.py
 ```
 
 See the [file_server/README.md](file_server/README.md) for detailed documentation.
+
+### 2. Homelab Stack (Pi-hole + Website + optional Minecraft)
+A Docker-Compose based setup to run:
+- **Pi-hole** for network-wide ad blocking
+- **Caddy** for hosting your website with HTTPS
+- Existing **file_server** behind reverse proxy
+- Optional **Minecraft server** profile
+
+**Location:** [`homelab/`](homelab/)
+
+**Quick Start:**
+```bash
+cd homelab
+cp .env.example .env
+docker compose up -d --build
+```
+
+See [homelab/README.md](homelab/README.md) for full setup details.
