@@ -13,59 +13,6 @@ Diese Konfiguration bereitet deinen Raspberry Pi für drei typische Aufgaben vor
 - Statische IP für den Pi im Router (wichtig für Pi-hole)
 - Portfreigaben nur falls externer Zugriff benötigt wird
 
-## Auf SD-Karte vorbereiten (empfohlen)
-
-Ja — du kannst die Grundlage komplett auf einer SD-Karte vorbereiten und sie danach in den Raspberry Pi stecken.
-
-### Schritt 1: Raspberry Pi OS auf die SD-Karte schreiben
-
-Nutze **Raspberry Pi Imager** und setze dabei direkt:
-
-- Hostname (z. B. `rpi-homelab`)
-- SSH aktivieren
-- Benutzer + Passwort
-- WLAN (falls kein LAN genutzt wird)
-- Zeitzone + Keyboard Layout
-
-### Schritt 2: Erststart am Raspberry Pi
-
-Nach dem Booten per SSH verbinden und Grundsystem aktualisieren:
-
-```bash
-sudo apt update && sudo apt upgrade -y
-```
-
-Docker + Compose Plugin installieren:
-
-```bash
-curl -fsSL https://get.docker.com | sh
-sudo usermod -aG docker $USER
-newgrp docker
-docker --version
-docker compose version
-```
-
-### Schritt 3: Repository auf den Pi bringen
-
-Option A (üblich): auf dem Pi klonen
-
-```bash
-git clone <DEIN_REPO_URL>
-cd raspberry-pi/homelab
-```
-
-Option B: lokal vorbereiten und Ordner auf die SD-Karte / den Pi kopieren (z. B. via SCP/USB).
-
-### Schritt 4: Stack starten
-
-```bash
-cp .env.example .env
-mkdir -p volumes/pihole/etc-pihole volumes/pihole/etc-dnsmasq.d \
-         volumes/caddy/data volumes/caddy/config \
-         volumes/file_server/uploads volumes/minecraft/data site
-docker compose up -d --build
-```
-
 ## Schnellstart
 
 ```bash
@@ -93,42 +40,6 @@ Wenn du zusätzlich Minecraft starten willst:
 ```bash
 docker compose --profile minecraft up -d
 ```
-
-## In VSCode vortesten
-
-Ja, das geht sehr gut. Zwei sinnvolle Wege:
-
-1. **Lokal in VSCode** (wenn dein Rechner Docker hat):
-
-```bash
-cd homelab
-cp .env.example .env
-docker compose config
-docker compose up -d --build
-docker compose ps
-```
-
-2. **VSCode Remote-SSH direkt auf den Raspberry Pi** (empfohlen für realistische Tests):
-
-- In VSCode die Erweiterung **Remote - SSH** nutzen.
-- Auf den Pi verbinden und den Ordner `raspberry-pi/homelab` öffnen.
-- Die gleichen `docker compose` Befehle im integrierten Terminal ausführen.
-
-### Was du in VSCode prüfen solltest
-
-- `docker compose config` läuft ohne Fehler.
-- `docker compose ps` zeigt `pihole`, `caddy`, `file_server` als `running`.
-- Logs prüfen:
-
-```bash
-docker compose logs -f pihole
-docker compose logs -f caddy
-docker compose logs -f file_server
-```
-
-### Wichtiger Hinweis für lokale Tests am PC
-
-Pi-hole braucht Port `53`. Falls dieser Port auf deinem Rechner schon belegt ist (häufig), teste zunächst nur Website/File-Server oder passe Ports temporär an.
 
 ## Zugriff
 
