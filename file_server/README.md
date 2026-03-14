@@ -67,6 +67,14 @@ http://<raspberry-pi-ip>:5000
 
 3. Use the web form to select and upload files
 
+
+### Running with Docker
+
+```bash
+docker build -t raspberry-file-server .
+docker run --rm -p 5000:5000 -v "$(pwd)/uploads:/app/uploads" raspberry-file-server
+```
+
 ### API Endpoints
 
 #### Upload a File (POST)
