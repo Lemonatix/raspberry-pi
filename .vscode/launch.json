@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: File Server",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/file_server/server.py",
+      "cwd": "${workspaceFolder}/file_server",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  ]
+}
