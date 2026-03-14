@@ -41,5 +41,3 @@ docker compose up -d --build
 ```
 
 See [homelab/README.md](homelab/README.md) for full setup details.
-
-Includes a step-by-step section to prepare everything on an SD card before first boot.
