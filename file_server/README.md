@@ -67,6 +67,24 @@ http://<raspberry-pi-ip>:5000
 
 3. Use the web form to select and upload files
 
+## VS Code Debugging (F5)
+
+If you develop locally in VS Code, this repository includes a debug configuration in
+`.vscode/launch.json`.
+
+1. Open the repository folder in VS Code.
+2. Select your Python interpreter (`file_server/.venv/bin/python` if you use a venv).
+3. Go to **Run and Debug** and start **Python: File Server** (or press `F5`).
+
+The server starts in the integrated terminal with working directory `file_server/`.
+
+Quick checks in a second terminal:
+
+```bash
+curl http://127.0.0.1:5000/health
+curl http://127.0.0.1:5000/files
+```
+
 
 ### Running with Docker
 
@@ -81,6 +99,46 @@ docker run --rm -p 5000:5000 -v "$(pwd)/uploads:/app/uploads" raspberry-file-ser
 ```bash
 curl -X POST -F "file=@/path/to/your/file.txt" http://<raspberry-pi-ip>:5000/upload
 ```
+
+### Upload from your laptop to your Raspberry Pi ("private cloud" in home network)
+
+1. **Find your Raspberry Pi IP address** on the Pi:
+
+```bash
+hostname -I
+```
+
+2. **Start the server on the Pi** (host `0.0.0.0` is already configured):
+
+```bash
+cd file_server
+python3 server.py
+```
+
+3. **From your laptop**, upload a file via curl:
+
+```bash
+curl -X POST -F "file=@/path/to/local/file.pdf" http://<RASPBERRY_PI_IP>:5000/upload
+```
+
+4. List uploaded files from your laptop:
+
+```bash
+curl http://<RASPBERRY_PI_IP>:5000/files
+```
+
+5. Optional: use the included Python client script from your laptop:
+
+```bash
+python3 client_example.py upload http://<RASPBERRY_PI_IP>:5000 /path/to/local/file.pdf
+python3 client_example.py list http://<RASPBERRY_PI_IP>:5000
+python3 client_example.py health http://<RASPBERRY_PI_IP>:5000
+```
+
+If your laptop cannot connect:
+- Ensure both devices are in the same network.
+- Ensure port `5000` is not blocked by firewall (`sudo ufw allow 5000` on the Pi).
+- Test reachability first: `ping <RASPBERRY_PI_IP>`.
 
 Response:
 ```json
